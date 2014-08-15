@@ -1,0 +1,10 @@
+#map_article {
+	width: 100%;
+	height: 200px;
+}
+
+#map_global {
+	width: 100%;
+	height: 400px;
+	background-color: red;
+}
