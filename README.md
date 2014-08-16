@@ -108,7 +108,7 @@ You can now access the current page `meta.address` ; in your theme`index.hmtl` :
 {% endif %}
 ```
 
-See it live : [momh.fr/test/leaflet/second](http://momh.fr/test/leaflet/sedond)
+See it live : [momh.fr/test/leaflet/second](http://momh.fr/test/leaflet/second)
 
 ## Mixing coordinates and addresses
 
@@ -140,9 +140,11 @@ To display a map that shows each points announced through coordinates or address
 {% else %}
 ```
 
+See it live : [momh.fr/map](http://momh.fr/map)
+
 __WARNING__ : if you are using Dan Reeves' `picotags` plugin, you have to put this piece of code after the code for the tags pages.
 
-For example, here is a piece of my `index.html` (I've slightly modify the elseif statement to exclude the page withe "Map" as a title) :
+For example, here is a piece of my `index.html` (I've slightly modify the elseif statement to exclude the page with "Map" as a title) :
 ```
 {% elseif pages and meta.title != 'Error 404' and meta.title != 'Map' %}
 <!-- tags page -->
@@ -170,4 +172,54 @@ For example, here is a piece of my `index.html` (I've slightly modify the elseif
 ```
 
 ## Providers
+
+By default the map provider is [www.openstreetmap.org](http://www.openstreetmap.org), but you can add several other providers thanks to the Leaflet plugin [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers).
+
+__WARNING__ : some providers (the ones that require registration) are not supported yet in this pico_leaflet plugin.
+
+In order to add other providers, you have to enable it in your `config.php` :
+```
+$config['leaflet']['providers'] = true;
+```
+Then, you have to specify the providers you want to load. First, you have to open the `plugins/pico_leaflet/leaflet-providers/leaflet-providers.js` file and check the `Definition of providers` part (begins at line 65). You can preview the full list of layers here : [http://leaflet-extras.github.io/leaflet-providers/preview/index.html](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
+
+In your `config.php`, you have to specify the providers inside an array, using a name of your choice (without space) as the key and the `provider[.<variant>]`string used in the leaflet-providers script or the "Provider names" that appears in [http://leaflet-extras.github.io/leaflet-providers/preview/index.html](http://leaflet-extras.github.io/leaflet-providers/preview/index.html).
+
+For example :
+
+```
+$config['leaflet']['providers_enabled'] = array(
+    'thland' => 'Thunderforest.Landscape', // Landscape variant of the Thunderforest provider
+    'stato' => 'Stamen.Toner', // Toner variant of Stamen provider
+    'stawa' => 'Stamen.Watercolor', Watercolor variant of Stamen provider
+    'hydda' => 'Hydda' // Hydda provider
+);
+```
+
+### Specifying the default provider
+
+You can specify the default provider adding this to your `config.php`, using one of the key/name of the `providers_enabled` array :
+```
+$config['leaflet']['providers_default'] = 'stato';
+```
+
+## Styling the map
+
+By default, the maps generated with pico_leaflet are style using the `/home/bbrice/WIN_DATA/webdev/pico/plugins/pico_leaflet/pico_leaflet.css` file. It's very basic :
+```
+#map_article {
+    width: 100%;
+    height: 200px;
+}
+
+#map_global {
+    width: 100%;
+    height: 400px;
+}
+```
+Of course, you can modify the appearance of the maps but I advise you to do that in your theme css, even if you have to use the !important argument.
+
+
+ 
+
 
