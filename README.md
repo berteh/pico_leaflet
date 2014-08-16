@@ -133,7 +133,7 @@ First, you can choose the URL where this map will be accessible. In your `config
 $config['leaflet']['mapurl'] = 'globalmap';
 ```
 
-If this line isn't present, the pico_leaflet plugin uses the `yourdomain.tld/map`.
+If this line isn't present or the value is empty, the pico_leaflet plugin uses the `yourdomain.tld/map`.
 
 Then, to display a map that shows each points announced through coordinates or address meta, you just have to modify your theme `index.html`:
 ```

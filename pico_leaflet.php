@@ -47,7 +47,7 @@ class Pico_Leaflet {
 	{
 		// if a url for the map is set in config.php, set is_map to true
 		// if the first n characters of the URL match mapurl value
-		if (isset($this->leaflet_mapurl))
+		if (isset($this->leaflet_mapurl) && $this->leaflet_mapurl != '')
 		{
 			$mapurl = trim($this->leaflet_mapurl);
 			$this->is_map = (substr($url, 0, strlen($mapurl)) == $mapurl);
