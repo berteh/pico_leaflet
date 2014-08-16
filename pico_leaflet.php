@@ -37,6 +37,10 @@ class Pico_Leaflet {
 		{
 			$this->providers_enabled = $settings['leaflet']['providers_enabled'];
 		}
+		if (isset($settings['leaflet']['mapbox']))
+		{
+			$this->providers_mapbox = $settings['leaflet']['mapbox'];
+		}
 		if (isset($settings['leaflet']['providers_default']))
 		{   
 			$this->providers_default = $settings['leaflet']['providers_default'];
@@ -175,6 +179,13 @@ class Pico_Leaflet {
 			{
 				$providers .= $key.' = L.tileLayer.provider(\''.$value.'\'),'.PHP_EOL;
 				$basemap .= '"'.$value.'":'.$key.','.PHP_EOL;
+			}
+		}
+		if (isset($this->providers_mapbox) && is_array($this->providers_mapbox)) {
+			foreach ($this->providers_mapbox as $key => $value) {
+				$mapid = substr($key, strpos($key, ".")+1);
+				$providers .= $mapid.' = L.tileLayer.provider(\'MapBox.'.$key.'\'),'.PHP_EOL;
+				$basemap .= '"'.$value.'":'.$mapid.','.PHP_EOL;
 			}
 		}
 		else

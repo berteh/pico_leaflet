@@ -133,7 +133,7 @@ First, you can choose the URL where this map will be accessible. In your `config
 $config['leaflet']['mapurl'] = 'globalmap';
 ```
 
-If this line isn't present or the value is empty, the pico_leaflet plugin uses the `yourdomain.tld/map`.
+If this line isn't present or the value is empty, the pico_leaflet plugin uses the `yourdomain.tld/map` URL.
 
 Then, to display a map that shows each points announced through coordinates or address meta, you just have to modify your theme `index.html`:
 ```
@@ -182,7 +182,7 @@ For example, here is a piece of my `index.html` (I've slightly modify the elseif
 
 By default the map provider is [www.openstreetmap.org](http://www.openstreetmap.org), but you can add several other providers thanks to the Leaflet plugin [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers).
 
-__WARNING__ : some providers (the ones that require registration) are not supported yet in this pico_leaflet plugin.
+__WARNING__ : some providers (the ones that require registration except Mapbox) are not supported yet in this pico_leaflet plugin.
 
 In order to add other providers, you have to enable it in your `config.php` :
 ```
@@ -196,10 +196,10 @@ For example :
 
 ```
 $config['leaflet']['providers_enabled'] = array(
-    'thland' => 'Thunderforest.Landscape', // Landscape variant of the Thunderforest provider
-    'stato' => 'Stamen.Toner', // Toner variant of Stamen provider
-    'stawa' => 'Stamen.Watercolor', Watercolor variant of Stamen provider
-    'hydda' => 'Hydda' // Hydda provider
+    'thland' => 'Thunderforest.Landscape',  // Landscape variant of the Thunderforest provider
+    'stato' => 'Stamen.Toner',              // Toner variant of Stamen provider
+    'stawa' => 'Stamen.Watercolor',         // Watercolor variant of Stamen provider
+    'hydda' => 'Hydda'                      // Hydda provider
 );
 ```
 
@@ -208,6 +208,25 @@ $config['leaflet']['providers_enabled'] = array(
 You can specify the default provider adding this to your `config.php`, using one of the key/name of the `providers_enabled` array :
 ```
 $config['leaflet']['providers_default'] = 'stato';
+```
+
+### Using Mapbox
+
+To add Mapbox maps, you have first to get their id from your "Projects" page or from the Project tab => Info => Map ID when you are in the map editing page.
+Your Map ID must be composed like this : `username.mapmbid`.
+
+In your Pico `config.php`, add this, using  :
+```
+$config['leaflet']['mapbox'] = array(
+    'username.mapmbid' => 'Mapbox',
+    'username.mapmbid2' => 'Mapbox 2'
+);
+```
+
+If you want to use a Mapbox map as the default provider you have to fill the `providers_default` setting with __ONLY__ the `mapmbid` from your MAP ID.
+Let's say you have loaded a map which Map ID is "truc.h32k09az" ; for the default provider setting, you will use:
+```
+$config['leaflet']['providers_default'] = 'h32k09az';
 ```
 
 ## Styling the map
