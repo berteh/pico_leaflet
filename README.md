@@ -140,6 +140,8 @@ To display a map that shows each points announced through coordinates or address
 {% else %}
 ```
 
+__WARNING__ : for now, you can't choose the URL which is mydomain.com/map.
+
 See it live : [momh.fr/map](http://momh.fr/map)
 
 __WARNING__ : if you are using Dan Reeves' `picotags` plugin, you have to put this piece of code after the code for the tags pages.
