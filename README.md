@@ -128,7 +128,14 @@ Address: rue du Puy Las Rodas 87000 Limoges|boulevard des frères de Goncourt Na
 
 ## Display a global map that presents every blog posts with coordinates or address meta
 
-To display a map that shows each points announced through coordinates or address meta, you just have to modify your theme `index.html`:
+First, you can choose the URL where this map will be accessible. In your `config.php`:
+```
+$config['leaflet']['mapurl'] = 'globalmap';
+```
+
+If this line isn't present, the pico_leaflet plugin uses the `yourdomain.tld/map`.
+
+Then, to display a map that shows each points announced through coordinates or address meta, you just have to modify your theme `index.html`:
 ```
 {% elseif meta.title == "Map" %}
     <article>
@@ -140,9 +147,7 @@ To display a map that shows each points announced through coordinates or address
 {% else %}
 ```
 
-__WARNING__ : for now, you can't choose the URL which is mydomain.com/map.
-
-See it live : [momh.fr/map](http://momh.fr/map)
+See it live : [momh.fr/globalmap](http://momh.fr/globalmap).
 
 __WARNING__ : if you are using Dan Reeves' `picotags` plugin, you have to put this piece of code after the code for the tags pages.
 
