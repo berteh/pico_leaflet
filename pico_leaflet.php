@@ -13,6 +13,13 @@
 
 class Pico_Leaflet {
 	public $is_map;
+	private $providers;
+	private $basemap;
+	private $default;
+	private $marker_coordinates = array();
+	private $marker_title = array();
+	private $marker_url = array();
+	private $markers;
 
 	public function config_loaded(&$settings)
 	{
@@ -98,7 +105,7 @@ class Pico_Leaflet {
 			{
 				$this->marker_coordinates[] = $value;
 				$this->marker_title[] = $meta['title'];
-				$this->marker_url[] = $page['url'];
+				$this->marker_url[] = '';
 			}
 			// Create a variable to initiate actions
 			$this->lmap = 'article';
@@ -153,18 +160,15 @@ class Pico_Leaflet {
 	{
 		for ($i=0; $i < count($this->marker_coordinates); $i++)
 		{ 
-			$markers .= 'var marker = L.marker(['.$this->marker_coordinates[$i].']).addTo(map).bindPopup("<a href=\''.$this->marker_url[$i].'\'>'.$this->marker_title[$i].'</a>");
+			$this->markers .= 'var marker = L.marker(['.$this->marker_coordinates[$i].']).addTo(map).bindPopup("<a href=\''.$this->marker_url[$i].'\'>'.$this->marker_title[$i].'</a>");
 					coordls.push(L.latLng('.$this->marker_coordinates[$i].'));';
 		}
-		return $markers;
+		return $this->markers;
 	}
 
 	public function build_pico_leaflet_map()
 	{
 		$idmap;
-		$providers;
-		$basemap;
-		$default;
 		if ($this->is_map === true)
 		{
 			$idmap = 'map_global';	
@@ -177,45 +181,41 @@ class Pico_Leaflet {
 		{
 			foreach ($this->providers_enabled as $key => $value)
 			{
-				$providers .= $key.' = L.tileLayer.provider(\''.$value.'\'),'.PHP_EOL;
-				$basemap .= '"'.$value.'":'.$key.','.PHP_EOL;
+				$this->providers .= $key.' = L.tileLayer.provider(\''.$value.'\'),'.PHP_EOL;
+				$this->basemap .= '"'.$value.'":'.$key.','.PHP_EOL;
 			}
 		}
 		if (isset($this->providers_mapbox) && is_array($this->providers_mapbox)) {
 			foreach ($this->providers_mapbox as $key => $value) {
 				$mapid = substr($key, strpos($key, ".")+1);
-				$providers .= $mapid.' = L.tileLayer.provider(\'MapBox.'.$key.'\'),'.PHP_EOL;
-				$basemap .= '"'.$value.'":'.$mapid.','.PHP_EOL;
+				$this->providers .= $mapid.' = L.tileLayer.provider(\'MapBox.'.$key.'\'),'.PHP_EOL;
+				$this->basemap .= '"'.$value.'":'.$mapid.','.PHP_EOL;
 			}
 		}
 		else
 		{
-			$providers = 'osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {attribution: "&copy; <a href=\'http://openstreetmap.org\'>OpenStreetMap</a> contributors, <a href=\'http://creativecommons.org/licenses/by-sa/2.0/\'>CC-BY-SA</a>",
+			$this->providers = 'osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {attribution: "&copy; <a href=\'http://openstreetmap.org\'>OpenStreetMap</a> contributors, <a href=\'http://creativecommons.org/licenses/by-sa/2.0/\'>CC-BY-SA</a>",
 				maxZoom: 18});';
-			$basemap = '"OpenStreetMap Default":osm';
+			$this->basemap = '"OpenStreetMap Default":osm';
 			$default = 'osm';
 		}
-		$providers = rtrim($providers, ",".PHP_EOL);
-		$basemap = rtrim($basemap, ",".PHP_EOL);
+		$this->providers = rtrim($this->providers, ",".PHP_EOL);
+		$this->basemap = rtrim($this->basemap, ",".PHP_EOL);
 
-		if (isset($this->providers_default) && $default != 'osm')
+		if (isset($this->providers_default) && $this->default != 'osm')
 		{
-			$default = $this->providers_default;
-		}
-
-		if (isset($this->lmap) && $this->lmap === 'article') {
-
+			$this->default = $this->providers_default;
 		}
 
 		$plbuildmap = '<script>
-					var '.$providers.';
+					var '.$this->providers.';
 					var map = L.map("'.$idmap.'", {
 					center: new L.LatLng(45.84028105450088,1.61224365234375),
 					zoom: 8,
-					layers: ['.$default.']
+					layers: ['.$this->default.']
 				});
 
-				var baseMaps = {'.$basemap.'
+				var baseMaps = {'.$this->basemap.'
 				};
 				L.control.layers(baseMaps).addTo(map);
 				var coordls = new Array();
