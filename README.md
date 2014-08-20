@@ -177,6 +177,132 @@ For example, here is a piece of my `index.html` (I've slightly modify the elseif
 
     </article>
 ```
+or you can use this alternate template structure
+```
+{% if is_front_page %}
+<!-- front page -->
+    {{ content }}
+<!-- front page -->
+
+{% elseif current_page is not empty %}
+    {% if meta.tags is not empty %}
+    <article>
+        <h1>{{ meta.title }}</h1>
+        {{ content }}
+
+        {% if meta.coordinates %}
+            <p>Coordonnées :</p>
+            <ul>
+            {% for coordinate in meta.coordinates %}
+                <li>{{ coordinate }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% if meta.address %}
+            <p>Adresses :</p>
+            <ul>
+            {% for address in meta.address %}
+                <li>{{ address }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        {{ map_article }}
+        <p class="meta">
+            Tags : 
+            {% for tag in meta.tags %}
+                <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+            {% endfor %}
+        </p>                   
+    </article>
+    {% else %}
+    <article>
+        <h1>{{ meta.title }}</h1>
+        {{ content }}
+    </article>
+    {% endif %}
+{% elseif current_page is empty %}             
+    {% if meta.title != 'Error 404' and meta.title != 'Map' %}
+    <!-- tags page -->
+    <p>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a>:</p>
+    {% for page in pages %}
+        
+            <article>
+                <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
+                <p class="meta">
+                    <span class="tags"><br />Tags :
+                        {% for tag in page.tags %}
+                            <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+                        {% endfor %}
+                    </span>
+                </p>
+                {{ page.excerpt }}
+            </article>
+    {% endfor %}
+    <p>
+        All tags :
+    </p>
+    <ul>
+        {% for tag in tag_list %}
+            <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+        {% endfor %}
+    </ul>
+            
+    <!-- tags page -->
+    {% elseif meta.title == 'Map' %}
+        <article>
+            <h1>{{meta.title}}</h1>
+
+            {{ map_global }}
+
+        </article>
+
+    {% endif %}
+{% endif %}
+```
+
+## Global map settings
+
+By default, the "global map" page uses the index.html from your theme (as we've seen above) and has "Map" as title.  
+You can change both of these behaviours using two settings in your `config.php`:
+```
+$config['leaflet']['maptemplate'] = 'map';
+$config['leaflet']['maptitle'] = 'My blog Leaflet map';
+```
+
+__WARNING__: if you modify the map title, you have to edit the conditional structure provided above and change the value of `meta.title != 'Map'` and `meta.title == 'Map'`.
+
+If you use a particular template, it can be very light :
+```
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8" />
+    
+    <title>{% if meta.title %}{{ meta.title|escape }} | {% endif %}{{ site_title }}</title>
+
+    <!-- HEAD STUFF FROM YOUR THEME -->
+</head>
+<body>
+
+    <header id="header">
+
+    </header>
+
+    <section id="content">       
+
+            <article>
+                <h1>{{meta.title}}</h1>
+                {{ map_global }}
+            </article>
+
+    </section>
+    <footer id="footer">
+
+    </footer>  
+</body>
+</html>
+```
 
 ## Providers
 

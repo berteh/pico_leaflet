@@ -28,6 +28,14 @@ class Pico_Leaflet {
 		{
 			$this->leaflet_mapurl = $settings['leaflet']['mapurl'];
 		}
+		if (isset($settings['leaflet']['maptemplate']))
+		{
+			$this->leaflet_maptemplate = $settings['leaflet']['maptemplate'];
+		}
+		if (isset($settings['leaflet']['maptitle']))
+		{
+			$this->leaflet_maptitle = $settings['leaflet']['maptitle'];
+		}
 		if (isset($settings['leaflet']['geocoding']))
 		{
 			$this->leaflet_geocoding = $settings['leaflet']['geocoding'];
@@ -227,13 +235,23 @@ class Pico_Leaflet {
 	}
 
 
-	public function before_render(&$twig_vars, &$twig)
+	public function before_render(&$twig_vars, &$twig, &$template)
 	{
 		if ($this->is_map === true) {
 			 // Override 404 header
 			header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
-			// Set page title to Map
-			$twig_vars['meta']['title'] = "Map";
+			// Select template if defined in config.php
+			if (isset($this->leaflet_maptemplate) && $this->leaflet_maptemplate != ''){
+				$template = $this->leaflet_maptemplate;
+			}
+			// Set map page title
+			if (isset($this->leaflet_maptitle) && $this->leaflet_maptitle != '') {
+				$twig_vars['meta']['title'] = $this->leaflet_maptitle;
+			}
+			else
+			{
+				$twig_vars['meta']['title'] = "Map";
+			}
 			$twig_vars['map_global'] = '<div id="map_global"></div>';
 		}
 		elseif (!$this->is_map === true && isset($this->lmap) && $this->lmap === 'article')
