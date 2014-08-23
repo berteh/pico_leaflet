@@ -65,6 +65,12 @@ class Pico_Leaflet {
 		{
 			$this->leaflet_thumb = $settings['leaflet']['thumbnail'];
 		}
+		// Checking if the Thumbnail meta is not defined allready
+		// with the advance_meta plugin
+		if (isset($settings['custom_meta_values']) && in_array("Thumbnail", $settings['custom_meta_values']))
+		{
+			$this->adv_meta_thumb = true;
+		}
 	}
 
 	public function request_url(&$url)
@@ -91,7 +97,10 @@ class Pico_Leaflet {
 		if (isset($this->leaflet_geocoding) && $this->leaflet_geocoding === true) {
 			$headers['address'] = 'Address';
 		}
-		$headers['thumbnail'] = 'Thumbnail';
+		if ((!isset($this->adv_meta_thumb)) || (isset($this->adv_meta_thumb) && $this->adv_meta_thumb != true))
+		{
+			$headers['thumbnail'] = 'Thumbnail';
+		}
 	}
 
 	public function osm_geocode(&$addresses,&$titleart,&$urlart,$thumb)
@@ -105,7 +114,7 @@ class Pico_Leaflet {
 				$this->marker_coordinates[] = $json[0]->lat.','.$json[0]->lon;
 				$this->marker_title[] = $titleart;
 				$this->marker_url[] = $urlart;
-				if ($this->leaflet_thumb === true && $thumb != '') {
+				if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && $thumb != '') {
 					$this->marker_thumb[] = '<br /><img src=\'/'.$thumb.'\' />';
 				}
 				else {
@@ -126,7 +135,7 @@ class Pico_Leaflet {
 				$this->marker_coordinates[] = $value;
 				$this->marker_title[] = $meta['title'];
 				$this->marker_url[] = '';
-				if ($this->leaflet_thumb === true && isset($meta['thumbnail']) && $meta['thumbnail'] != '') {
+				if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && isset($meta['thumbnail']) && $meta['thumbnail'] != '') {
 					$this->marker_thumb[] = '<br /><img src=\'/'.$meta['thumbnail'].'\' />';
 				}
 				else {
@@ -158,7 +167,7 @@ class Pico_Leaflet {
 						$this->marker_coordinates[] = $coordinates;
 						$this->marker_title[] = $page['title'];
 						$this->marker_url[] = $page['url'];
-						if ($this->leaflet_thumb === true && isset($page['thumbnail']) && $page['thumbnail'] != '')
+						if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && isset($page['thumbnail']) && $page['thumbnail'] != '')
 						{
 							$this->marker_thumb[] = '<br /><img src=\'/'.$page['thumbnail'].'\' />';
 						}
