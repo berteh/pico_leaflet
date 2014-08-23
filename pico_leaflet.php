@@ -83,7 +83,7 @@ class Pico_Leaflet {
 	{
 		// Define leaflet variables
 		$headers['coordinates'] = 'Coordinates';
-		if ($this->leaflet_geocoding === true) {
+		if (isset($this->leaflet_geocoding) && $this->leaflet_geocoding === true) {
 			$headers['address'] = 'Address';
 		}
 	}
@@ -142,7 +142,7 @@ class Pico_Leaflet {
 						$this->marker_url[] = $page['url'];
 					}
 				}
-				if ($page['address'])
+				if (isset($this->leaflet_geocoding) && $this->leaflet_geocoding === true && $page['address'])
 				{   
 					$page['address'] = explode('|', $page['address']);
 
