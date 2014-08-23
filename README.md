@@ -17,6 +17,8 @@ Place the `pico_leaflet` folder into the `plugins` directory.
 
 ## Basic usage
 
+### `Coordinates` attribute into the page meta
+
 Add a 'Coordinates' attribute into the page meta:
 
 - always start with the latitude;
@@ -35,32 +37,7 @@ Coordinates: 1.45,0.45|1.56,0.47
 */
 ```
 
-### Display the map
-
-To display the map, you just have to edit your active theme `index.html` and add this to your blog posts section :
-```
-{{ map_article }}
-```
-
-Don't worry : leaflet scripts and stylesheets are loaded only if the coordinates meta (or the address meta -- see below) is set.
-
-### Access the `meta.coordinates`
-
-You can now access the current page `meta.coordinates` ; in your theme`index.hmtl` :
-```
-{% if meta.coordinates %}
-    <p>Coordinates :</p>
-    <ul>
-    {% for coordinate in meta.coordinates %}
-        <li>{{ coordinate }}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
-```
-
-See it live : [momh.fr/test/leaflet/first](http://momh.fr/test/leaflet/first)
-
-## Geocoding
+### `Address` attribute into the page meta
 
 Instead of using coordinates, you can use addresses to geolocate your blog posts.
 
@@ -89,14 +66,30 @@ Address: 19, boulevard de la Corderie 87000 Limoges|boulevard des Américains Na
 
 ### Display the map
 
-Just like before, to display the map, you just have to edit your active theme `index.html` and add this to your blog posts section :
+To display the map, you just have to edit your active theme `index.html` and add this to your blog posts section :
 ```
 {{ map_article }}
 ```
 
-### Access the `meta.address`
+Don't worry : leaflet scripts and stylesheets are loaded only if the coordinates meta (or the address meta -- see below) is set.
 
-You can now access the current page `meta.address` ; in your theme`index.hmtl` :
+### Access the `meta.coordinates` and `meta.address`
+
+You can now access the current page `meta.coordinates` ; in your theme`index.hmtl` :
+```
+{% if meta.coordinates %}
+    <p>Coordinates :</p>
+    <ul>
+    {% for coordinate in meta.coordinates %}
+        <li>{{ coordinate }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+```
+
+See it live : [momh.fr/test/leaflet/first](http://momh.fr/test/leaflet/first)
+
+To access the current page `meta.address`, it's just like for the `meta.coordinates`: in your theme`index.hmtl` :
 ```
 {% if meta.address %}
     <p>Adresses :</p>
