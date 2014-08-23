@@ -19,6 +19,7 @@ class Pico_Leaflet {
 	private $marker_coordinates = array();
 	private $marker_title = array();
 	private $marker_url = array();
+	private $marker_thumb = array();
 	private $markers;
 
 	public function config_loaded(&$settings)
@@ -60,6 +61,10 @@ class Pico_Leaflet {
 		{   
 			$this->providers_default = $settings['leaflet']['providers_default'];
 		}
+		if (isset($settings['leaflet']['thumbnail']))
+		{
+			$this->leaflet_thumb = $settings['leaflet']['thumbnail'];
+		}
 	}
 
 	public function request_url(&$url)
@@ -86,9 +91,10 @@ class Pico_Leaflet {
 		if (isset($this->leaflet_geocoding) && $this->leaflet_geocoding === true) {
 			$headers['address'] = 'Address';
 		}
+		$headers['thumbnail'] = 'Thumbnail';
 	}
 
-	public function osm_geocode(&$addresses,&$titleart,&$urlart)
+	public function osm_geocode(&$addresses,&$titleart,&$urlart,$thumb)
 	{
 		$nominatim_baseurl = 'http://nominatim.openstreetmap.org/search?format=json&q=';
 		foreach ($addresses as $key => $value) {
@@ -99,6 +105,12 @@ class Pico_Leaflet {
 				$this->marker_coordinates[] = $json[0]->lat.','.$json[0]->lon;
 				$this->marker_title[] = $titleart;
 				$this->marker_url[] = $urlart;
+				if ($this->leaflet_thumb === true && $thumb != '') {
+					$this->marker_thumb[] = '<br /><img src=\'/'.$thumb.'\' />';
+				}
+				else {
+					$this->marker_thumb[] = '';
+				}
 			}
 		}
 	}
@@ -114,6 +126,12 @@ class Pico_Leaflet {
 				$this->marker_coordinates[] = $value;
 				$this->marker_title[] = $meta['title'];
 				$this->marker_url[] = '';
+				if ($this->leaflet_thumb === true && isset($meta['thumbnail']) && $meta['thumbnail'] != '') {
+					$this->marker_thumb[] = '<br /><img src=\'/'.$meta['thumbnail'].'\' />';
+				}
+				else {
+					$this->marker_thumb[] = '';
+				}
 			}
 			// Create a variable to initiate actions
 			$this->lmap = 'article';
@@ -121,7 +139,7 @@ class Pico_Leaflet {
 		if (isset($meta['address']) && !is_array($meta['address']) && $meta['address'] != '')
 		{
 			$meta['address'] = explode('|', $meta['address']);
-			$this->osm_geocode($meta['address'],$meta['title'],$page['url']);
+			$this->osm_geocode($meta['address'],$meta['title'],$page['url'],$meta['thumbnail']);
 			$this->lmap = 'article';
 		}
 	}
@@ -140,13 +158,20 @@ class Pico_Leaflet {
 						$this->marker_coordinates[] = $coordinates;
 						$this->marker_title[] = $page['title'];
 						$this->marker_url[] = $page['url'];
+						if ($this->leaflet_thumb === true && isset($page['thumbnail']) && $page['thumbnail'] != '')
+						{
+							$this->marker_thumb[] = '<br /><img src=\'/'.$page['thumbnail'].'\' />';
+						}
+						else {
+							$this->marker_thumb[] = '';
+						}
 					}
 				}
 				if (isset($this->leaflet_geocoding) && $this->leaflet_geocoding === true && $page['address'])
 				{   
 					$page['address'] = explode('|', $page['address']);
 
-					$this->osm_geocode($page['address'],$page['title'],$page['url']);
+					$this->osm_geocode($page['address'],$page['title'],$page['url'],$page['thumbnail']);
 				}
 			}
 		}
@@ -168,7 +193,7 @@ class Pico_Leaflet {
 	{
 		for ($i=0; $i < count($this->marker_coordinates); $i++)
 		{ 
-			$this->markers .= 'var marker = L.marker(['.$this->marker_coordinates[$i].']).addTo(map).bindPopup("<a href=\''.$this->marker_url[$i].'\'>'.$this->marker_title[$i].'</a>");
+			$this->markers .= 'var marker = L.marker(['.$this->marker_coordinates[$i].']).addTo(map).bindPopup("<a href=\''.$this->marker_url[$i].'\'>'.$this->marker_title[$i].$this->marker_thumb[$i].'</a>");
 					coordls.push(L.latLng('.$this->marker_coordinates[$i].'));';
 		}
 		return $this->markers;
