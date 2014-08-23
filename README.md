@@ -103,6 +103,23 @@ To access the current page `meta.address`, it's just like for the `meta.coordina
 
 See it live : [momh.fr/test/leaflet/second](http://momh.fr/test/leaflet/second)
 
+### Adding a thumbnail inside Leaflet popups
+
+You just have to add a `Thumbnail` attribute to your page meta, using the `relative path` to your image as the value (meaning using `IMG/logos/conkylogo.png` for the image located here: [http://momh.fr/IMG/logos/conkylogo.png](http://momh.fr/IMG/logos/conkylogo.png)).
+
+```
+Title: Pico Leaflet : fourth example
+Description: Ajouter une carte à des pages articles dans Pico CMS
+Author: Brice Boucard
+Date: 2014/08/28
+License: Creative Commons Attribution-ShareAlike 4.0 International License
+Template: index
+Coordinates: 22.610771801269206, 12.4086906909942627|32.33859359694389, 22.473631381988525
+Thumbnail: IMG/logos/awn.png
+```
+
+See it live : [momh.fr/test/leaflet/four](http://momh.fr/test/leaflet/four)
+
 ## Mixing coordinates and addresses
 
 Of course you can mix coordinates and addresses just like in this example : [momh.fr/test/leaflet/third](http://momh.fr/test/leaflet/third) which is made from coordinates and addresses specified in its meta :
