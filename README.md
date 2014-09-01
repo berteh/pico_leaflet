@@ -87,7 +87,7 @@ You can now access the current page `meta.coordinates` ; in your theme`index.hmt
 {% endif %}
 ```
 
-See it live : [momh.fr/test/leaflet/first](http://momh.fr/test/leaflet/first)
+See it live : [momh.fr/tutos/Pico/pico_leaflet_coord](http://momh.fr/tutos/Pico/pico_leaflet_coord)
 
 To access the current page `meta.address`, it's just like for the `meta.coordinates`: in your theme`index.hmtl` :
 ```
@@ -101,7 +101,7 @@ To access the current page `meta.address`, it's just like for the `meta.coordina
 {% endif %}
 ```
 
-See it live : [momh.fr/test/leaflet/second](http://momh.fr/test/leaflet/second)
+See it live : [momh.fr/tutos/Pico/pico_leaflet_add](http://momh.fr/tutos/Pico/pico_leaflet_add)
 
 ### Adding a thumbnail inside Leaflet popups
 
@@ -118,11 +118,11 @@ Coordinates: 22.610771801269206, 12.4086906909942627|32.33859359694389, 22.47363
 Thumbnail: IMG/logos/awn.png
 ```
 
-See it live : [momh.fr/test/leaflet/four](http://momh.fr/test/leaflet/four)
+See it live : [momh.fr/tutos/Pico/pico_leaflet_thumb](http://momh.fr/tutos/Pico/pico_leaflet_thumb)
 
 ## Mixing coordinates and addresses
 
-Of course you can mix coordinates and addresses just like in this example : [momh.fr/test/leaflet/third](http://momh.fr/test/leaflet/third) which is made from coordinates and addresses specified in its meta :
+Of course you can mix coordinates and addresses just like in this example : [momh.fr/tutos/Pico/pico_leaflet_mix](http://momh.fr/tutos/Pico/pico_leaflet_mix) which is made from coordinates and addresses specified in its meta :
 ```
 /*
 Title: Pico Leaflet : third example
