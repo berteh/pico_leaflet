@@ -105,7 +105,7 @@ class Pico_Leaflet {
 
 	public function osm_geocode(&$addresses,&$titleart,&$urlart,$thumb)
 	{
-		$nominatim_baseurl = 'http://nominatim.openstreetmap.org/search?format=json&q=';
+		/*$nominatim_baseurl = 'http://nominatim.openstreetmap.org/search?format=json&q=';
 		foreach ($addresses as $key => $value) {
 			$nominatim_query = urlencode($value);
 			$data = file_get_contents( "{$nominatim_baseurl}{$nominatim_query}&limit=1" );
@@ -120,6 +120,36 @@ class Pico_Leaflet {
 				else {
 					$this->marker_thumb[] = '';
 				}
+			}
+		}*/
+		$geocoder = new \Geocoder\Geocoder();
+		$adapter  = new \Geocoder\HttpAdapter\ZendHttpAdapter();
+		$chain    = new \Geocoder\Provider\ChainProvider(array(
+		  new \Geocoder\Provider\GoogleMapsProvider($adapter),
+		  new \Geocoder\Provider\BingMapsProvider($adapter, ' Avkt8nyCkNLJgW_KnVt62QiGcguMTMeCxRuZ9antQDW81sWJ8-KEOHGJ8K_p4xp3 '),
+		  new \Geocoder\Provider\OpenStreetMapProvider($adapter),
+		));
+		$geocoder->registerProvider($chain);
+
+		foreach ($addresses as $key => $value) {
+			try {
+				// $geocode = $geocoder->geocode($value);
+			 // 	var_export($geocode);
+				$geocode = $geocoder->geocode($value)->getCoordinates();
+
+				if (!empty($geocode)) {
+					$this->marker_coordinates[] = $geocode[0].','.$geocode[1];
+					$this->marker_title[] = $titleart.' ////'.$value;
+					$this->marker_url[] = $urlart;
+					if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && $thumb != '') {
+						$this->marker_thumb[] = '<br /><img src=\'/'.$thumb.'\' />';
+					}
+					else {
+						$this->marker_thumb[] = '';
+					}
+				}
+			} catch (Exception $e) {
+			    echo $e->getMessage();
 			}
 		}
 	}
