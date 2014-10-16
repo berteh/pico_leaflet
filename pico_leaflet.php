@@ -120,7 +120,7 @@ class Pico_Leaflet {
 
 				if (!empty($geocode)) {
 					$this->marker_coordinates[] = $geocode[0].','.$geocode[1];
-					$this->marker_title[] = $titleart.' ////'.$value;
+					$this->marker_title[] = $titleart;
 					$this->marker_url[] = $urlart;
 					if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && $thumb != '') {
 						$this->marker_thumb[] = '<br /><img src=\'/'.$thumb.'\' />';
