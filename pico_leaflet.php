@@ -105,7 +105,10 @@ class Pico_Leaflet {
 
 	public function osm_geocode(&$addresses,&$titleart,&$urlart,$thumb)
 	{
-		$nominatim_baseurl = 'http://nominatim.openstreetmap.org/search?format=json&q=';
+		// Using an alternative service based on OSM rather than 
+		// http://nominatim.openstreetmap.org/search?format=json&q=
+		// because of usage policy causing issues on shared web hosting
+		$nominatim_baseurl = 'http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q=';
 		foreach ($addresses as $key => $value) {
 			$nominatim_query = urlencode($value);
 			$data = file_get_contents( "{$nominatim_baseurl}{$nominatim_query}&limit=1" );
