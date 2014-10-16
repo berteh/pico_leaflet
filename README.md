@@ -381,7 +381,90 @@ By default, the maps generated with pico_leaflet are style using the `/home/bbri
 ```
 Of course, you can modify the appearance of the maps but I advise you to do that in your theme css, even if you have to use the !important argument.
 
+## About the devel_geophp branch : using the geocoder-php library
 
- 
+Instead of using the basic geocode function that use the PHP `file_get_contents()` function, you can use "The almost missing Geocoder PHP library!" : [geocoder-php](http://geocoder-php.org/Geocoder/).
 
+First, you have to install and load this library.
 
+Edit the composer.json and add to the `require` section this line&nbsp;:
+```
+"willdurand/geocoder": "3.0.*@dev"
+```
+
+If curl isn't available on your server, you can add this line&nbsp;:
+```
+"curl/curl": "dev-master"
+```
+
+Then you have to update the packages&nbsp;:
+```
+$ composer update
+```
+
+You shoud now have the `vendor/willdurand/geocoder` folder.
+
+Finally you have to replace the `osm_geocode` function, line 106-128&nbsp;:
+```
+public function osm_geocode(&$addresses,&$titleart,&$urlart,$thumb)
+{
+    // Using an alternative service based on OSM rather than
+    // http://nominatim.openstreetmap.org/search?format=json&q=
+    // because of usage policy causing issues on shared web hosting
+    $nominatim_baseurl = 'http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q=';
+    foreach ($addresses as $key => $value) {
+        $nominatim_query = urlencode($value);
+        $data = file_get_contents( "{$nominatim_baseurl}{$nominatim_query}&limit=1" );
+        $json = json_decode( $data );
+        if (!empty($json)) {
+            $this->marker_coordinates[] = $json[0]->lat.','.$json[0]->lon;
+            $this->marker_title[] = $titleart;
+            $this->marker_url[] = $urlart;
+            if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && $thumb != '') {
+                $this->marker_thumb[] = '<br /><img src=\'/'.$thumb.'\' />';
+            }
+            else {
+                $this->marker_thumb[] = '';
+            }
+        }
+    }
+}
+```
+
+by this version&nbsp;:
+```
+public function osm_geocode(&$addresses,&$titleart,&$urlart,$thumb)
+{
+    $rootUrl = 'http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q=';
+    $geocoder = new \Geocoder\Geocoder();
+    $adapter = new \Geocoder\HttpAdapter\CurlHttpAdapter();
+    $chain = new \Geocoder\Provider\ChainProvider(array(
+        // new \Geocoder\Provider\GoogleMapsProvider($adapter),
+        new \Geocoder\Provider\NominatimProvider($adapter,$rootUrl),
+    ));
+    $geocoder->registerProvider($chain);
+    foreach ($addresses as $key => $value) {
+        try {
+            $geocode = $geocoder->geocode($value)->getCoordinates();
+            if (!empty($geocode)) {
+                $this->marker_coordinates[] = $geocode[0].','.$geocode[1];
+                $this->marker_title[] = $titleart;
+                $this->marker_url[] = $urlart;
+                if (isset($this->leaflet_thumb) && $this->leaflet_thumb === true && $thumb != '') {
+                    $this->marker_thumb[] = '<br /><img src=\'/'.$thumb.'\' />';
+                }
+                else {
+                    $this->marker_thumb[] = '';
+                }
+            }
+        } catch (Exception $e) {
+        echo $e->getMessage();
+        }
+    }
+}
+```
+
+You can simply download the `pico_leaflet.php` from the `devel_geophp` branch&nbsp;: [https://github.com/bricebou/pico_leaflet/tree/devel_geophp](https://github.com/bricebou/pico_leaflet/tree/devel_geophp).
+
+__WARNING__: if your use a shared web hosting, there is a chance that you obtain errors, time outs, or that you don't get any response when trying to geocode addresses with some APIs like Google Maps, OpenStreetMap...      
+It is due to some restrictions of the geocoding services, but using the `$rootUrl` in the code above solves this issue.
