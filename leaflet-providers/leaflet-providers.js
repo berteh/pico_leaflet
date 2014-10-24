@@ -72,8 +72,7 @@
 			url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			options: {
 				attribution:
-					'&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+					'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			},
 			variants: {
 				Mapnik: {},
@@ -216,7 +215,7 @@
 				Watercolor: {
 					options: {
 						variant: 'watercolor',
-						minZoom: 3,
+						minZoom: 1,
 						maxZoom: 16
 					}
 				}
@@ -419,68 +418,27 @@
 				labels: 'acetate-labels',
 				hillshading: 'hillshading'
 			}
+		},
+		FreeMapSK: {
+			url: 'http://{s}.freemap.sk/T/{z}/{x}/{y}.jpeg',
+			options: {
+				minZoom: 8,
+				maxZoom: 16,
+				subdomains: ['t1', 't2', 't3', 't4'],
+				attribution:
+					'{attribution.OpenStreetMap}, vizualization CC-By-SA 2.0 <a href="http://freemap.sk">Freemap.sk</a>'
+			}
+		},
+		MtbMap: {
+			url: 'http://tile.mtbmap.cz/mtbmap_tiles/{z}/{x}/{y}.png',
+			options: {
+				attribution:
+					'{attribution.OpenStreetMap} &amp; USGS'
+			}
 		}
 	};
 
 	L.tileLayer.provider = function (provider, options) {
 		return new L.TileLayer.Provider(provider, options);
 	};
-
-	L.Control.Layers.Provided = L.Control.Layers.extend({
-		initialize: function (base, overlay, options) {
-			var first;
-
-			var labelFormatter = function (label) {
-				return label.replace(/\./g, ': ').replace(/([a-z])([A-Z])/g, '$1 $2');
-			};
-
-			if (base.length) {
-				(function () {
-					var out = {},
-					    len = base.length,
-					    i = 0;
-
-					while (i < len) {
-						if (typeof base[i] === 'string') {
-							if (i === 0) {
-								first = L.tileLayer.provider(base[0]);
-								out[labelFormatter(base[i])] = first;
-							} else {
-								out[labelFormatter(base[i])] = L.tileLayer.provider(base[i]);
-							}
-						}
-						i++;
-					}
-					base = out;
-				}());
-				this._first = first;
-			}
-
-			if (overlay && overlay.length) {
-				(function () {
-					var out = {},
-					    len = overlay.length,
-					    i = 0;
-
-					while (i < len) {
-						if (typeof overlay[i] === 'string') {
-							out[labelFormatter(overlay[i])] = L.tileLayer.provider(overlay[i]);
-						}
-						i++;
-					}
-					overlay = out;
-				}());
-			}
-			L.Control.Layers.prototype.initialize.call(this, base, overlay, options);
-		},
-		onAdd: function (map) {
-			this._first.addTo(map);
-			return L.Control.Layers.prototype.onAdd.call(this, map);
-		}
-	});
-
-	L.control.layers.provided = function (baseLayers, overlays, options) {
-		return new L.Control.Layers.Provided(baseLayers, overlays, options);
-	};
 }());
-
