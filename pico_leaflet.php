@@ -41,6 +41,12 @@ class Pico_Leaflet {
 		{
 			$this->leaflet_geocoding = $settings['leaflet']['geocoding'];
 		}
+		if (isset($settings['leaflet']['local']))
+		{
+			if ($settings['leaflet']['local'] === true) {
+				$this->leaflet_local_base = $settings['base_url'] .'/'. basename(PLUGINS_DIR) .'/pico_leaflet/Leaflet/dist/';
+			}
+		}
 		if (isset($settings['leaflet']['providers']))
 		{
 			$this->leaflet_providers = $settings['leaflet']['providers'];
@@ -192,9 +198,18 @@ class Pico_Leaflet {
 	public function build_pico_leaflet_head()
 	{
 		$plhead;
-		$plhead = '<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+		if (isset($this->leaflet_local_base)) {
+			$plhead = '<link rel="stylesheet" href="'.$this->leaflet_local_base.'leaflet.css" />
+			<link rel="stylesheet" href="'.$this->lmap_styles.'" />
+			<script src="'.$this->leaflet_local_base.'leaflet.js"></script>';
+		}
+		else
+		{
+			$plhead = '<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 			<link rel="stylesheet" href="'.$this->lmap_styles.'" />
 			<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>';
+		}
+		
 		if ($this->leaflet_providers === true) {
 			$plhead .= PHP_EOL.'<script src="'.$this->providers_script.'"></script>';
 		}
