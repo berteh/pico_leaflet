@@ -15,6 +15,16 @@ It gives you access to:
 
 Place the `pico_leaflet` folder into the `plugins` directory.
 
+### Using HTTPS protocol
+
+If you are using the HTTPS protocol for your website, you can't load the Leaflet library (both javascript and css) from the non secure CDN used by Leaflet.    
+In order to get this plugin to work, you'll have to add this to your `config.php`:
+```
+$config['leaflet']['local'] = true;
+```
+
+Now, the javasript and the styles of Leaflet are loaded from your server.
+
 ## Basic usage
 
 ### `Coordinates` attribute into the page meta
